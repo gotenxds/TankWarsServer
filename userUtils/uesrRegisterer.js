@@ -8,7 +8,7 @@ var userRegisterer =
         loggedInUsers : []
     },
 
-    registerUser : function(user)
+    registerUser : function (user, tryAndStartGame)
     {
         if (this.data.loggedInUsers == this.data.maxUsers)
         {

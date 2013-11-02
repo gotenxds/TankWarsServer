@@ -2,16 +2,19 @@ var userRegisterer = require('./userUtils/uesrRegisterer.js').get;
 var net = require('net');
 
 
-
 var server = net.createServer(function (connection)
 {
     initializeServerDefaults(connection);
-    userRegisterer.registerUser(connection);
+    userRegisterer.registerUser(connection, startGame);
 
     // Will most probly be moved to a diffrent file.
     connection.on('data', recivedData);
 });
 
+function startGame()
+{
+
+}
 
 server.listen(4001, function ()
 {

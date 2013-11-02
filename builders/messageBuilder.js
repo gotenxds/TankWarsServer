@@ -10,7 +10,9 @@ exports.get =
         },
         message :
         {
-            connected: "Connected"
+            connected: "Connected",
+            goodbye: "disconnected",
+            toManyConnections: "Connection refused, to many connections."
         },
         delimiter: "~",
 

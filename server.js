@@ -1,18 +1,34 @@
+var messageBuilder = require('./messageBuilder.js').get();
 var net = require('net');
+
+var options =
+    {
+        maxUsers : 2,
+        loggedInUsers : []
+    };
 
 var server = net.createServer(function (connection)
 {
+    giveConnectedMessage(connection);
     initializeServerDefaults(connection);
 
     connection.on('data', recivedData);
-
-    count++;
 });
+
+function giveConnectedMessage(connection)
+{
+    connection.write
+        (
+            messageBuilder
+                .of(messageBuilder.messageType.message)
+                .about(messageBuilder.message.connected)
+        )
+}
 
 
 server.listen(3000, function ()
 {
-    console.log('\033[96m server listening on *:3000\033[39m');
+    console.log('Tank war server started listening on port 3000');
 });
 
 

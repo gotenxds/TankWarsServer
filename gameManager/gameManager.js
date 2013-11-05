@@ -1,4 +1,4 @@
-var illegalNumberOfPlayers = require('../exceptions/IlleagelArgumentException.js');
+var illegalNumberOfPlayers = require('../exceptions/IlleagelArgumentException.js').IlleagelArgumentException;
 
 exports.get =
 {
@@ -12,6 +12,8 @@ exports.get =
     }
 };
 
+var users = [];
+
 function throwIfIllegalNumberOfPlayers()
 {
     if (players.length <= 1)
@@ -21,6 +23,25 @@ function throwIfIllegalNumberOfPlayers()
 }
 
 function runGameLoop()
-{}
+{
+    var currentUser = users[0];
+    var gameOn = true;
 
-var users = [];
+    while(gameOn)
+    {
+
+    }
+}
+
+function getNextUser(curUser)
+{
+    var indexOfNextUser = users.indexOf(curUser) + 1;
+
+    if ((users.length) > indexOfNextUser)
+    {
+        return users[indexOfNextUser];
+    }
+
+    return users[0];
+}
+

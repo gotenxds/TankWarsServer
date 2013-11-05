@@ -8,9 +8,14 @@ var userRegisterer =
         loggedInUsers : []
     },
 
+    events :
+    {
+        maxUsers: "maxUsers"
+    },
+
     registerUser : function (user, tryAndStartGame)
     {
-        if (this.data.loggedInUsers == this.data.maxUsers)
+        if (maxReached())
         {
             refuseUser(user);
         }
@@ -28,17 +33,19 @@ var userRegisterer =
                     .of(messageBuilder.messageType.message)
                     .about(messageBuilder.message.goodbye)
             )
+    },
+
+    on : function(event, callback)
+    {
+        events[event].push(callback);
     }
 };
 
-function refuseUser(user)
+var events = [];
+
+function maxReached()
 {
-    user.end
-        (
-            messageBuilder
-                .of(messageBuilder.messageType.error)
-                .about(messageBuilder.message.toManyConnections)
-        );
+    return userRegisterer.data.loggedInUsers == userRegisterer.data.maxUsers;
 }
 
 function connectUser(user)
@@ -51,6 +58,37 @@ function connectUser(user)
                 .of(messageBuilder.messageType.message)
                 .about(messageBuilder.message.connected)
         );
+
+    if (maxReached())
+    {
+        fireEvent(userRegisterer.events.maxUsers);
+    }
+}
+
+function refuseUser(user)
+{
+    user.end
+        (
+            messageBuilder
+                .of(messageBuilder.messageType.error)
+                .about(messageBuilder.message.toManyConnections)
+        );
+}
+
+function fireEvent(event)
+{
+    if(events[event] != undefined)
+    {
+        callListenersOf(event)
+    }
+}
+
+function callListenersOf(event)
+{
+    for (var index = 0; index < events.length; index++)
+    {
+        events[event][index]();
+    }
 }
 
 exports.get = userRegisterer;

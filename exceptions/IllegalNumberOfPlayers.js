@@ -1,4 +1,4 @@
-var Exception = require('./Exception.js').Exception;
+var Exception = require('./Exception.js');
 
 exports.IlleagelArgumentException = function(errorString)
 {

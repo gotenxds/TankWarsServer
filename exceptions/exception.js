@@ -1,12 +1,13 @@
 
-function Exception(errosString)
+function Exception(errorString, name)
 {
-    this.error = errosString;
+    this.name = "";
+    this.error = errorString;
 }
 
 Exception.prototype.printError = function()
 {
-    console.log(this.error);
+    console.log(this.name + "-:-" + this.error);
 };
 
 exports.Exception = Exception;

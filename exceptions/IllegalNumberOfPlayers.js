@@ -1,6 +1,6 @@
 var Exception = require('./Exception.js');
 
-exports.IlleagelArgumentException = function(errorString)
+exports.IllegalArgumentException = function(errorString)
 {
     return Object.create(Exception(errorString))
 };

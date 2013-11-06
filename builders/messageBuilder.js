@@ -1,25 +1,12 @@
 // Yes i've built a builder, screw you GUYS.
+var messageData = require('./MessageData').get;
 
 exports.get =
 {
-        messageType :
-        {
-            message: "MSG",
-            error: "ERR",
-            command: "CMD"
-        },
-        message :
-        {
-            connected: "Connected",
-            goodbye: "disconnected",
-            toManyConnections: "Connection refused, to many connections."
-        },
-        delimiter: "~",
-
         of : function (type)
         {
             return {
-                message : type + this.delimiter,
+                message : type + messageData.delimiter,
                 about : function(message)
                         {
                             return this.message + message;

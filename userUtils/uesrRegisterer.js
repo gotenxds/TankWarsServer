@@ -1,4 +1,5 @@
 var messageBuilder = require('../builders/messageBuilder.js').get;
+var messageData = require('../builders/MessageData').get;
 
 var userRegisterer =
 {
@@ -13,7 +14,7 @@ var userRegisterer =
         maxUsers: "maxUsers"
     },
 
-    registerUser : function (user, tryAndStartGame)
+    registerUser : function (user)
     {
         if (maxReached())
         {
@@ -30,8 +31,8 @@ var userRegisterer =
         user.end
             (
                 messageBuilder
-                    .of(messageBuilder.messageType.message)
-                    .about(messageBuilder.message.goodbye)
+                    .of(messageData.messageType.message)
+                    .about(messageData.message.goodbye)
             )
     },
 
@@ -41,11 +42,16 @@ var userRegisterer =
     }
 };
 
-var events = [];
+var events = {"maxUsers":[]};
+
+var eventData =
+{
+    users : userRegisterer.data.loggedInUsers
+};
 
 function maxReached()
 {
-    return userRegisterer.data.loggedInUsers == userRegisterer.data.maxUsers;
+    return userRegisterer.data.loggedInUsers.length == userRegisterer.data.maxUsers;
 }
 
 function connectUser(user)
@@ -55,8 +61,8 @@ function connectUser(user)
     user.write
         (
             messageBuilder
-                .of(messageBuilder.messageType.message)
-                .about(messageBuilder.message.connected)
+                .of(messageData.messageType.message)
+                .about(messageData.message.connected)
         );
 
     if (maxReached())
@@ -70,8 +76,8 @@ function refuseUser(user)
     user.end
         (
             messageBuilder
-                .of(messageBuilder.messageType.error)
-                .about(messageBuilder.message.toManyConnections)
+                .of(messageData.messageType.error)
+                .about(messageData.message.toManyConnections)
         );
 }
 
@@ -85,9 +91,9 @@ function fireEvent(event)
 
 function callListenersOf(event)
 {
-    for (var index = 0; index < events.length; index++)
+    for (var index = 0; index < events[event].length; index++)
     {
-        events[event][index]();
+        events[event][index](eventData);
     }
 }
 

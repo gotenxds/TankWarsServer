@@ -1,30 +1,24 @@
 var userRegisterer = require('./userUtils/uesrRegisterer.js').get;
+var gameManager = require('./gameManager/gameManager').get;
 var net = require('net');
+var server;
 
+initialize();
 
-var server = net.createServer(function (connection)
+function initialize()
 {
-    initializeServerDefaults(connection);
-    userRegisterer.registerUser(connection, startGame);
+    userRegisterer.on(userRegisterer.events.maxUsers, gameManager.startGame);
 
-    // Will most probly be moved to a diffrent file.
-    connection.on('data', recivedData);
-});
+    server = net.createServer(function (connection)
+    {
+        initializeServerDefaults(connection);
+        userRegisterer.registerUser(connection);
+    });
 
-function startGame()
-{
-
-}
-
-server.listen(4001, function ()
-{
-    console.log('Tank war server started listening on port 4001');
-});
-
-
-function recivedData(data)
-{
-    // TxO BE ADDED
+    server.listen(6000, function ()
+    {
+        console.log('Tank war server started listening on port 6000');
+    });
 }
 
 function initializeServerDefaults(conn)

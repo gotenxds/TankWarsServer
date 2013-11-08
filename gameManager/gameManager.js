@@ -1,24 +1,26 @@
 var messageBuilder = require('../builders/messageBuilder').get;
+var messageData = require('../builders/MessageData').get;
 var illegalNumberOfPlayers = require('../exceptions/IllegalNumberOfPlayers');
 
 exports.get =
 {
-    startGame : function(players)
+    startGame : function(eventData)
     {
-        throwIfIllegalNumberOfPlayers(players);
+        throwIfIllegalNumberOfPlayers(eventData.users);
 
-        users = players;
+        users = eventData.users;
 
         registerUsersToEvents();
+        startGame();
     }
 };
+var turnTime = 30000;
 
 var users = [];
-var actions;
-actions[messageBuilder.messageType.command] = [];
-actions[messageBuilder.messageType.error] = [];
-actions[messageBuilder.messageType.message] = [];
-
+var actions = {};
+actions[messageData.messageType.command] = [];
+actions[messageData.messageType.error] = [];
+actions[messageData.messageType.message] = [];
 function throwIfIllegalNumberOfPlayers(players)
 {
     if (players.length <= 1)
@@ -39,17 +41,20 @@ function registerUsersToEvents()
     }
 }
 
+function startGame()
+{
+    sendTo(users[0], messageData.messageType.command, messageData.message.turnStart);
+}
+
 function receivedDataFromUser(data)
 {
     var message = messageBuilder.getSplitedOf(data.data);
-
     actions[message.type][message.content](data.user);
 }
 
 function getUserAfter(user)
 {
     var curUserIndex = users.indexOf(user);
-
     if ((users.length - 1) > curUserIndex)
     {
         return users[curUserIndex + 1];
@@ -60,9 +65,12 @@ function getUserAfter(user)
 
 function sendToNext(user, type, message)
 {
-    var nextUser = getUserAfter(user);
+    sendTo(getUserAfter(user), type, message);
+}
 
-    nextUser.write
+function sendTo(user, type, message)
+{
+    user.write
         (
             messageBuilder
                 .of(type)
@@ -70,12 +78,7 @@ function sendToNext(user, type, message)
         );
 }
 
-actions[messageBuilder.messageType.message][messageBuilder.message.turnEnd] = function(user)
+actions[messageData.messageType.message][messageData.message.turnEnd] = function(user)
 {
-    sendToNext(user, messageBuilder.messageType.command, messageBuilder.message.turnStart);
-};
-
-actions[messageBuilder.messageType.message][messageBuilder.message.hit] = function(user)
-{
-    sendToNext(user, messageBuilder.messageType.command, messageBuilder.message.damageTaken);
+    sendToNext(user, messageData.messageType.command, messageData.message.turnStart);
 };
